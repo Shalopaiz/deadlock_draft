@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#0a0c11">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Deadlock — драфт турнира</title>
+<style>
+:root{--bg:#0a0c11;--pn:#131822;--pn2:#1a2030;--ln:#2a3246;--tx:#ebe8df;--mu:#8b93a7;--gold:#e8b04a;--gold2:#b9822a;--amber:#f2a93b;--sapph:#43a4f7;--ban:#e5484d;--c:var(--gold);color-scheme:dark;box-sizing:border-box}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--tx);font:15px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif;min-height:100vh;
+background:radial-gradient(900px 420px at 15% -10%,#2a1d0a66,transparent),radial-gradient(900px 420px at 90% -10%,#0d2a4a66,transparent),var(--bg);padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+main{max-width:1060px;margin:0 auto;padding:18px 14px 40px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.logo{font-size:30px;font-weight:900;letter-spacing:.18em;background:linear-gradient(90deg,var(--amber),#fff3d6 50%,var(--sapph));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}
+.codeb{font:700 14px ui-monospace,Menlo,monospace;letter-spacing:.2em;padding:5px 12px;border:1px solid var(--gold2);border-radius:8px;color:var(--gold);background:#e8b04a14}
+h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
+.mu{color:var(--mu)}.center{text-align:center}.hide{display:none!important}
+.card{background:linear-gradient(180deg,var(--pn2),var(--pn));border:1px solid var(--ln);border-radius:14px;padding:16px;margin:14px 0;box-shadow:0 8px 28px #0006}
+label{font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+input,textarea{width:100%;background:#0b0f17;border:1px solid var(--ln);border-radius:9px;padding:9px 11px;color:var(--tx);font:inherit;outline:none;transition:.15s}
+input:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px #e8b04a22}
+textarea{min-height:80px}
+button{font:inherit;font-weight:700;letter-spacing:.04em;color:#1a1204;background:linear-gradient(180deg,#f6c768,var(--gold2));border:0;border-radius:9px;padding:10px 18px;cursor:pointer;box-shadow:0 2px 0 #6b4a12,0 6px 16px #e8b04a22;transition:.12s}
+button:hover{filter:brightness(1.08);transform:translateY(-1px)}
+button:active{transform:translateY(1px);box-shadow:0 0 0 #0000}
+button.sec{background:transparent;color:var(--tx);border:1px solid var(--ln);box-shadow:none}
+button.sec:hover{border-color:var(--gold)}
+button:disabled{opacity:.35;cursor:default;transform:none;filter:none}
+a{text-decoration:none}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:150px}
+.role{display:inline-block;padding:3px 12px;border-radius:99px;background:linear-gradient(180deg,#f6c768,var(--gold2));color:#1a1204;font-weight:800;font-size:13px}
+.seat{border:1px solid var(--ln);border-radius:10px;padding:10px;background:#0b0f1788}
+.seat b{display:block;margin-bottom:6px}.seat button{margin-top:6px;padding:6px 12px;font-size:13px}
+.big{font-size:19px;font-weight:800;margin:8px 0}
+.coin{width:110px;height:110px;border-radius:50%;margin:12px auto;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-weight:900;font-size:13px;letter-spacing:.06em;color:#4a2f00;background:radial-gradient(circle at 30% 28%,#fff0b8,#e8b04a 55%,#9a6a1c);box-shadow:inset 0 0 0 5px #fff3c466,inset 0 0 0 9px #9a6a1c88,0 10px 30px #e8b04a44;animation:fl 1s ease-out}
+@keyframes fl{from{transform:rotateY(1080deg) scale(.6)}to{transform:none}}
+.draft{display:grid;grid-template-columns:250px minmax(0,1fr) 250px;grid-template-areas:"A C B";gap:14px;align-items:start}
+#tA{grid-area:A}#tB{grid-area:B}.mid{grid-area:C}
+@media(max-width:860px){.draft{grid-template-columns:1fr 1fr;grid-template-areas:"A B" "C C"}}
+.team{--c:var(--gold);border:1px solid var(--ln);border-top:4px solid var(--c);border-radius:14px;padding:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,var(--pn2)),var(--pn) 120px);transition:.2s}
+.team.amber,.st.amber{--c:var(--amber)}.team.sapph,.st.sapph{--c:var(--sapph)}
+.team.act{box-shadow:0 0 0 2px var(--c),0 0 30px color-mix(in srgb,var(--c) 40%,transparent);transform:translateY(-2px)}
+.ph b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side{font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:99px;color:var(--c);border:1px solid var(--c)}
+.tm{font-size:12px;color:var(--mu);margin-left:6px;font-variant-numeric:tabular-nums}
+.lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);margin:12px 0 5px}
+.bans{display:flex;gap:6px}
+.bans .slot{width:40px;height:40px;padding:0;justify-content:center;border-color:#e5484d66;overflow:hidden}
+.bans .slot span{display:none}.bans .slot i{width:100%;height:100%;border-radius:0;opacity:.4;filter:grayscale(.7)}
+.bans .slot:not(.empty)::after{content:"";position:absolute;inset:0;background:linear-gradient(45deg,transparent 46%,var(--ban) 46% 54%,transparent 54%)}
+.picks{display:grid;gap:6px}
+.slot{position:relative;display:flex;align-items:center;gap:9px;min-height:40px;padding:4px 10px 4px 4px;border-radius:9px;border:1px dashed var(--ln);background:#0b0f1766;font-size:13px;font-weight:700}
+.slot.pick{border:1px solid var(--c);background:linear-gradient(90deg,color-mix(in srgb,var(--c) 22%,transparent),transparent)}
+.slot i{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:900;color:#fff;flex:none;text-shadow:0 1px 2px #0008}
+.slot.empty.act{border:1px solid var(--c);color:var(--c);justify-content:center;animation:pl 1s infinite}
+.slot.ban.sk i{background:var(--ln)!important}
+@keyframes pl{50%{background:color-mix(in srgb,var(--c) 22%,transparent)}}
+.mid{--c:var(--gold);margin:0}
+.banner{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.phase{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}
+.turn{font-size:22px;font-weight:900;letter-spacing:.02em}
+.turn.ban{color:var(--ban)}.turn.pick{color:var(--c)}
+.ring{--p:100;width:86px;height:86px;border-radius:50%;flex:none;display:grid;place-items:center;position:relative;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--ln) 0)}
+.ring::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--pn)}
+.ring.low{background:conic-gradient(var(--ban) calc(var(--p)*1%),var(--ln) 0)}
+.timer{position:relative;font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1;text-align:center}
+.timer.sm{font-size:12px}.ring.low .timer{color:var(--ban)}
+.steps{display:flex;gap:4px;flex-wrap:wrap;margin:12px 0}
+.st{--c:var(--gold);width:22px;height:22px;border-radius:6px;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:1px solid var(--ln);color:var(--mu)}
+.st.amber,.st.sapph{background:color-mix(in srgb,var(--c) 30%,transparent);color:var(--tx)}
+.st.ban{border-color:var(--ban)}
+.st.cur{outline:2px solid #fff;transform:scale(1.18)}.st.done{opacity:.35}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:9px;margin-top:12px}
+.hero{padding:10px 4px 8px;border-radius:12px;border:1px solid var(--ln);background:linear-gradient(180deg,var(--pn2),var(--pn));text-align:center;font-size:12px;font-weight:700;cursor:pointer;user-select:none;position:relative;transition:.14s}
+.hero:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 8px 18px #0008}
+.hero i{display:flex;width:52px;height:52px;margin:0 auto 6px;border-radius:50%;align-items:center;justify-content:center;font-style:normal;font-size:17px;font-weight:900;color:#fff;box-shadow:inset 0 0 0 2px #ffffff30,0 3px 8px #0008;text-shadow:0 1px 2px #0008}
+.hero.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 0 24px #e8b04a55;transform:translateY(-3px)}
+.hero.x{opacity:.28;pointer-events:none;filter:grayscale(1)}
+.hero.x::after{content:attr(data-s);position:absolute;top:3px;right:6px;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--ban)}
+.hero.bn::before{content:"✕";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:52px;line-height:52px;font-size:38px;color:var(--ban);font-weight:900;z-index:1}
+.confirm{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center;background:#0e131dee;backdrop-filter:blur(8px);border:1px solid var(--ln);border-radius:12px;padding:9px;margin-top:14px;box-shadow:0 10px 30px #000a}
+.confirm .sel{flex:1;font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#q{margin-top:12px}
+</style>
+</head>
+<body>
+<main>
+<header><div><div class="logo">DEADLOCK</div><div class="sub">Турнирный драфт · Captains Mode 6v6</div></div><div class="codeb hide" id="codeb"></div></header>
+
+<section id="home">
+  <div class="card">
+    <h2>Создать драфт (вы — судья)</h2>
+    <div class="row">
+      <div><label class="mu">Команда 1</label><input id="n1" value="Команда 1"></div>
+      <div><label class="mu">Команда 2</label><input id="n2" value="Команда 2"></div>
+    </div>
+    <p class="mu" style="margin:10px 0 4px">Герои (через запятую, правьте под патч)</p>
+    <textarea id="pool"></textarea>
+    <p class="mu" style="margin:10px 0 4px">Недоступны (Fearless / отключены)</p>
+    <input id="blocked" placeholder="например: Haze, Seven">
+    <div class="row" style="margin-top:10px">
+      <div><label class="mu">Секунд на ход</label><input id="tt" type="number" value="30" min="5"></div>
+      <div><label class="mu">Резерв на команду, сек</label><input id="rt" type="number" value="130" min="0"></div>
+    </div>
+    <p class="center"><button id="create">Создать комнату</button></p>
+  </div>
+  <div class="card hide" id="links">
+    <h2>Ссылки комнаты</h2>
+    <p class="mu">Личные ссылки капитанов нельзя пересылать: по ним определяется, кто ходит.</p>
+    <div id="linkList"></div>
+    <p class="center"><a id="openHost"><button>Открыть как судья</button></a></p>
+  </div>
+</section>
+
+<section id="room" class="hide">
+  <div class="card"><div class="row" style="align-items:center"><div>Вы: <span class="role" id="role"></span> <span class="mu" id="conn"></span></div>
+    <button class="sec" id="copy" style="flex:0 0 auto">Ссылка для зрителей</button></div></div>
+  <div id="stage" class="card center hide"></div>
+  <div id="s3" class="hide">
+    <div class="draft">
+      <div class="team A" id="tA"></div>
+      <div class="mid card" id="mid">
+        <div class="banner">
+          <div><div class="phase" id="phase"></div><div class="turn" id="turn"></div></div>
+          <div class="ring" id="ring"><div class="timer" id="timer"></div></div>
+        </div>
+        <div class="steps" id="steps"></div>
+        <input id="q" placeholder="Поиск героя…">
+        <div class="grid" id="grid"></div>
+        <div class="confirm">
+          <div class="sel" id="selTxt"></div>
+          <button id="skip" class="sec">Пропустить</button>
+          <button id="undo" class="sec" title="Отменить прошлый ход (судья)">↶</button>
+          <button id="ok" disabled>Подтвердить</button>
+        </div>
+      </div>
+      <div class="team B" id="tB"></div>
+    </div>
+  </div>
+  <div id="s4" class="card hide"><h2>Драфт завершён</h2><div id="res"></div><p><button id="copyRes">Скопировать итог</button> <button id="undo2" class="sec hide">↶ Отменить последний ход</button></p></div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const list=v=>v.split(",").map(s=>s.trim()).filter(Boolean);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+$("pool").value="Abrams,Apollo,Bebop,Billy,Calico,Celeste,Drifter,Dynamo,Fathom,Graves,Grey Talon,Haze,Holliday,Infernus,Ivy,Kelvin,Lady Geist,Lash,McGinnis,Mina,Mirage,Mo & Krill,Paige,Pocket,Rem,Seven,Shiv,Sinclair,Victor,Vindicta,Viscous,Vyper,Warden,Wraith,Yamato";
+const SEQ="bA bB bA bB pA pB pB pA bB bA bB bA pB pA pA pB pB pA pA pB".split(" ").map(s=>({t:s[0]==="b"?"ban":"pick",k:s[1]}));
+const PH=["Баны 1","Пики 1","Баны 2","Пики 2"],phaseOf=i=>i<4?0:i<8?1:i<12?2:3;
+const col=h=>{let x=0;for(const c of h||"")x=(x*31+c.charCodeAt(0))%360;return`linear-gradient(135deg,hsl(${x} 62% 52%),hsl(${(x+30)%360} 58% 26%))`};
+const ini=h=>(h||"?").replace(/[^A-Za-zА-Яа-я ]/g,"").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+const Q=new URLSearchParams(location.search),code=(Q.get("r")||"").toUpperCase(),tok=Q.get("t")||"";
+const base=location.origin+location.pathname;
+let D=null,you="spec",skew=0,sel=null;
+
+const post=(u,b)=>fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(r=>r.json()).catch(()=>({}));
+const act=(a,x={})=>post(`/api/room/${code}/act`,{t:tok,a,...x});
+
+$("create").onclick=async()=>{
+  const bl=list($("blocked").value).map(x=>x.toLowerCase());
+  const pool=list($("pool").value).filter(h=>!bl.includes(h.toLowerCase()));
+  if(pool.length<20){alert("Нужно минимум 20 доступных героев.");return}
+  const r=await post("/api/create",{n:[$("n1").value,$("n2").value],pool,tt:+$("tt").value,rt:+$("rt").value});
+  if(!r.code){alert(r.error||"Ошибка создания");return}
+  const L=(r.tokens?[["Судья (ваша)","host"],[($("n1").value||"Команда 1")+" · капитан","c0"],[($("n2").value||"Команда 2")+" · капитан","c1"]]:[]).map(([n,k])=>[n,`${base}?r=${r.code}&t=${r.tokens[k]}`]);
+  L.push(["Зрители",`${base}?r=${r.code}`]);
+  $("linkList").innerHTML=L.map(([n,u],i)=>`<div class="seat" style="margin-bottom:8px"><b>${esc(n)}</b><input readonly value="${u}" id="lk${i}"><button class="sec" data-copy="lk${i}">Копировать</button></div>`).join("");
+  $("openHost").href=L[0][1];$("links").classList.remove("hide");
+};
+document.addEventListener("click",e=>{
+  const c=e.target.closest("[data-copy]");
+  if(c){const i=$(c.dataset.copy);i.select();try{navigator.clipboard.writeText(i.value)}catch(_){document.execCommand("copy")}c.textContent="Скопировано"}
+  const b=e.target.closest("[data-a]");if(b&&D)act(b.dataset.a);
+});
+
+if(code){
+  $("home").classList.add("hide");$("room").classList.remove("hide");$("codeb").textContent=code;$("codeb").classList.remove("hide");
+  const es=new EventSource(`/api/room/${code}/events?t=${encodeURIComponent(tok)}`);
+  es.onopen=()=>$("conn").textContent="";
+  es.onerror=()=>$("conn").textContent="· переподключение…";
+  es.onmessage=e=>{const m=JSON.parse(e.data);D=m.s;you=m.you;skew=m.now-Date.now();render()};
+  setInterval(()=>{if(D&&D.stage==="draft")paint()},250);
+  $("copy").onclick=()=>{try{navigator.clipboard.writeText(`${base}?r=${code}`);$("copy").textContent="Скопировано"}catch(_){}};
+}
+const team=k=>k==="A"?D.first:1-D.first;
+const host=()=>you==="host";
+const canAct=t=>host()||you==="c"+t;
+const now=()=>Date.now()+skew;
+
+function render(){
+  $("role").textContent=host()?"Судья":you[0]==="c"?"Капитан · "+D.n[+you[1]]:"Зритель";
+  const st=D.stage;
+  $("s3").classList.toggle("hide",st!=="draft");$("s4").classList.toggle("hide",st!=="done");
+  const sg=$("stage");sg.classList.toggle("hide",!["coin","order","side"].includes(st));
+  if(st==="coin")sg.innerHTML=`<h2>Жребий</h2><div class="coin">МОНЕТА</div>`+(host()||you[0]==="c"?`<button data-a="flip">Бросить монету</button>`:`<p class="mu">Ждём бросок монеты…</p>`);
+  else if(st==="order")sg.innerHTML=`<h2>Жребий</h2><div class="coin">${esc(D.n[D.w])}</div><div class="big">Жребий выиграл: ${esc(D.n[D.w])}</div>`+(canAct(D.w)?`<p class="mu">Выберите очередность:</p><div class="row"><button data-a="first">Первым банить и пикать</button><button class="sec" data-a="second">Вторым (последний пик)</button></div>`:`<p class="mu">Победитель выбирает очередность…</p>`);
+  else if(st==="side"){const l=1-D.w;sg.innerHTML=`<h2>Жребий</h2><div class="big">${esc(D.n[D.w])} — ${D.first===D.w?"первые":"вторые"}</div>`+(canAct(l)?`<p class="mu">${esc(D.n[l])}, выберите сторону:</p><div class="row"><button data-a="amber">Amber Hand</button><button class="sec" data-a="sapph">Sapphire Flame</button></div>`:`<p class="mu">${esc(D.n[l])} выбирает сторону…</p>`)}
+  else if(st==="draft"){
+    if(sel&&D.log.some(l=>l.h===sel))sel=null;
+    $("steps").innerHTML=SEQ.map((s,j)=>`<div class="st ${D.side[team(s.k)]==="Amber Hand"?"amber":"sapph"} ${s.t} ${j<D.i?"done":""} ${j===D.i?"cur":""}" title="${PH[phaseOf(j)]}">${s.t==="ban"?"Б":"П"}</div>`).join("");
+    $("phase").textContent=`${PH[phaseOf(D.i)]} · ход ${D.i+1} из ${SEQ.length}`;
+    renderGrid();paint();
+  }else{
+    $("res").innerHTML=summary().map(r=>`<div class="card"><b>${esc(r.name)}</b> <span class="mu">(${esc(r.side)})</span><p>Пики: ${esc(r.pk)}</p><p class="mu">Баны: ${esc(r.bn)}</p></div>`).join("")+`<p class="mu">Дальше: распределите линии (3 × 2 героя) до загрузки матча.</p>`;
+    $("undo2").classList.toggle("hide",!host());
+  }
+}
+function summary(){return[0,1].map(t=>{const k=t===D.first?"A":"B";const f=ty=>D.log.filter(l=>l.k===k&&l.t===ty).map(l=>l.h||"—").join(", ");return{name:D.n[t],side:D.side[t],pk:f("pick"),bn:f("ban")}})}
+$("copyRes").onclick=()=>{const t=summary().map(r=>`${r.name} (${r.side})\nПики: ${r.pk}\nБаны: ${r.bn}`).join("\n\n");try{navigator.clipboard.writeText(t);$("copyRes").textContent="Скопировано"}catch(e){prompt("Скопируйте:",t)}};
+function slot(e,a,type){
+  if(e)return`<div class="slot ${type} ${e.h?"":"sk"}" title="${esc(e.h||"пропуск")}"><i style="background:${col(e.h)}">${e.h?ini(e.h):"—"}</i><span>${esc(e.h||"пропуск")}</span></div>`;
+  return`<div class="slot empty ${a?"act":""}">${a?"●":""}</div>`;
+}
+function panel(k,rs){
+  const t=team(k),cur=SEQ[D.i],mine=cur&&cur.k===k;
+  const bn=D.log.filter(l=>l.k===k&&l.t==="ban"),pk=D.log.filter(l=>l.k===k&&l.t==="pick");
+  let h=`<div class="ph"><b>${esc(D.n[t])}</b><span class="side">${esc(D.side[t])}</span><span class="tm">${k==="A"?"1-й":"2-й"} · резерв ${fmt(rs[k])}</span></div><div class="lbl">Баны</div><div class="bans">`;
+  for(let j=0;j<4;j++)h+=slot(bn[j],mine&&cur.t==="ban"&&j===bn.length,"ban");
+  h+=`</div><div class="lbl">Пики</div><div class="picks">`;
+  for(let j=0;j<6;j++)h+=slot(pk[j],mine&&cur.t==="pick"&&j===pk.length,"pick");
+  $("t"+k).innerHTML=h+"</div>";$("t"+k).className="team "+(D.side[t]==="Amber Hand"?"amber":"sapph")+(mine?" act":"");
+}
+function paint(){
+  const st=SEQ[D.i];if(!st)return;
+  const k=st.k,used=(now()-D.ts)/1000,left=Math.max(0,D.tt-used),over=Math.max(0,used-D.tt);
+  const rs={A:D.rs.A,B:D.rs.B};rs[k]=Math.max(0,D.rs[k]-over);
+  const t=team(k),mine=canAct(t);
+  $("turn").textContent=(st.t==="ban"?"Бан · ":"Пик · ")+D.n[t];$("turn").className="turn "+st.t;
+  $("timer").textContent=left>0?Math.ceil(left)+" с":"резерв "+fmt(rs[k]);
+  $("ring").style.setProperty("--p",left>0?left/D.tt*100:(D.rt?rs[k]/D.rt*100:0));
+  $("ring").classList.toggle("low",left<=5);$("timer").classList.toggle("sm",left<=0);
+  $("mid").style.setProperty("--c",D.side[t]==="Amber Hand"?"var(--amber)":"var(--sapph)");
+  panel("A",rs);panel("B",rs);
+  $("ok").disabled=!(mine&&sel);$("ok").textContent=st.t==="ban"?"Забанить":"Выбрать";
+  $("skip").classList.toggle("hide",st.t!=="ban"||!mine);
+  $("undo").classList.toggle("hide",!host()||D.i===0);
+  $("selTxt").textContent=mine?(sel||"Выберите героя"):"Ход делает "+D.n[t];
+}
+function renderGrid(){
+  const q=$("q").value.toLowerCase();
+  $("grid").innerHTML=D.pool.filter(h=>h.toLowerCase().includes(q)).map(h=>{
+    const l=D.log.find(l=>l.h===h);
+    return`<div class="hero ${l?"x":""} ${l&&l.t==="ban"?"bn":""} ${sel===h?"sel":""}" data-h="${esc(h)}" data-s="${l?(l.t==="ban"?"бан":"пик"):""}"><i style="background:${col(h)}">${ini(h)}</i>${esc(h)}</div>`}).join("");
+}
+const commit=h=>{if(D&&D.stage==="draft"&&canAct(team(SEQ[D.i].k))){sel=null;act("move",{h})}};
+$("q").oninput=()=>D&&renderGrid();
+$("grid").onclick=e=>{const h=e.target.closest(".hero");if(!h||!D||!canAct(team(SEQ[D.i].k)))return;sel=h.dataset.h;renderGrid();paint()};
+$("grid").ondblclick=e=>{const h=e.target.closest(".hero");if(h&&sel===h.dataset.h)commit(sel)};
+$("ok").onclick=()=>commit(sel);$("skip").onclick=()=>commit("");
+$("undo").onclick=$("undo2").onclick=()=>act("undo");
+addEventListener("keydown",e=>{if(e.key==="Enter"&&D&&D.stage==="draft"&&sel)commit(sel)});
+</script>
+</body>
+</html>
